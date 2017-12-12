@@ -84,12 +84,13 @@ static DRV_GFX_CLIENT_OBJ drvILI9341Clients;
 void GFX_TMR_DelayMS(unsigned int delayMs);
 
 #define  LCD_DataPort LATB    
-  
+/*  
 #define LCD_RS		LATEbits.LATE7  		 
 #define LCD_WR		LATEbits.LATE6  		  
 #define LCD_RD		LATEbits.LATE5  			     
 #define LCD_CS		LATGbits.LATG7  			
 #define LCD_REST	LATGbits.LATG8	  
+*/
 
 void LCD_Writ_Bus(uint16_t data)   
 {
@@ -103,8 +104,10 @@ void LCD_Writ_Bus(uint16_t data)
     LATEbits.LATE3 = data & 0b01;
     data = data >> 1;
     LATEbits.LATE4 = data & 0b01;
-	LCD_WR=0;
-	LCD_WR=1; 
+	//LCD_WR=0;
+	//LCD_WR=1; 
+	PLIB_PORTS_PinSet(PORTS_ID_0, LCD_WR_PORT, LCD_WR_BIT_POS);
+	PLIB_PORTS_PinSet(PORTS_ID_0, LCD_WR_PORT, LCD_WR_BIT_POS);
 #endif
 }
 
@@ -112,13 +115,15 @@ void LCD_Writ_Bus(uint16_t data)
 
 void LCD_WR_DATA(uint16_t da)
 {
-    LCD_RS=1;
+    //LCD_RS=1;
+	PLIB_PORTS_PinSet(PORTS_ID_0, LCD_RS_PORT, LCD_RS_BIT_POS);
 	LCD_Writ_Bus(da);
 }	
   
 void LCD_WR_REG(uint16_t da)	 
 {	
-    LCD_RS=0;
+    //LCD_RS=0;
+	PLIB_PORTS_PinClear(PORTS_ID_0, LCD_RS_PORT, LCD_RS_BIT_POS);
 	LCD_Writ_Bus(da);
 }
 
@@ -370,6 +375,7 @@ SYS_MODULE_OBJ DRV_GFX_ILI9341_Initialize(const SYS_MODULE_INDEX   index, const 
         drvILI9341Obj.maxY = verticalSize - 1;
     }
     
+	/*
     LCD_CS =1; 
 	LCD_RD=1;
 	LCD_WR=1;
@@ -378,6 +384,15 @@ SYS_MODULE_OBJ DRV_GFX_ILI9341_Initialize(const SYS_MODULE_INDEX   index, const 
 	LCD_REST=1;	
 	GFX_TMR_DelayMS(20);			
 	LCD_CS =0;  
+	*/
+	PLIB_PORTS_PinSet(PORTS_ID_0, LCD_CS_PORT, LCD_CS_BIT_POS);
+	PLIB_PORTS_PinSet(PORTS_ID_0, LCD_RD_PORT, LCD_RD_BIT_POS);
+	PLIB_PORTS_PinSet(PORTS_ID_0, LCD_WR_PORT, LCD_WR_BIT_POS);
+	PLIB_PORTS_PinClear(PORTS_ID_0, LCD_REST_PORT, LCD_REST_BIT_POS);
+	GFX_TMR_DelayMS(20);	
+	PLIB_PORTS_PinSet(PORTS_ID_0, LCD_REST_PORT, LCD_REST_BIT_POS);
+	GFX_TMR_DelayMS(20);			
+	PLIB_PORTS_PinClear(PORTS_ID_0, LCD_CS_PORT, LCD_CS_BIT_POS);
 
 	//************* Start Initial Sequence **********//
 	LCD_WR_REG(0xcf); 
