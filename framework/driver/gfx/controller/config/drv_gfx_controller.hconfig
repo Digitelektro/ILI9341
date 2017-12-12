@@ -1,0 +1,24 @@
+menu "Graphics Controllers"
+
+enum DRV_GFX_CONTROLLER_ENUM
+    "Not Generated (Existing Non-LCC Driver)"
+    || "Legacy LCC"
+	|| "Generated LCC"
+
+config DRV_GFX_CONTROLLER_SELECT
+	string
+	range DRV_GFX_CONTROLLER_ENUM
+	default "Generated LCC" if USE_DRV_GFX_LCC && USE_DRV_GFX_LCC_GENERATED
+	default "Legacy LCC" if USE_DRV_GFX_LCC && !USE_DRV_GFX_LCC_GENERATED
+	default "Not Generated (Existing Non-LCC Driver)"
+
+source "$HARMONY_VERSION_PATH/framework/driver/gfx/controller/glcd/config/drv_gfx_glcd.hconfig"
+source "$HARMONY_VERSION_PATH/framework/driver/gfx/controller/lcc/config/drv_gfx_lcc.hconfig"
+source "$HARMONY_VERSION_PATH/framework/driver/gfx/controller/otm2201a/config/drv_gfx_otm2201a.hconfig"
+source "$HARMONY_VERSION_PATH/framework/driver/gfx/controller/ssd1926/config/drv_gfx_ssd1926.hconfig"
+source "$HARMONY_VERSION_PATH/framework/driver/gfx/controller/ssd1289/config/drv_gfx_ssd1289.hconfig"
+source "$HARMONY_VERSION_PATH/framework/driver/gfx/controller/ili9341/config/drv_gfx_ili9341.hconfig"
+source "$HARMONY_VERSION_PATH/framework/driver/gfx/controller/s1d13517/config/drv_gfx_s1d13517.hconfig"
+endmenu
+
+

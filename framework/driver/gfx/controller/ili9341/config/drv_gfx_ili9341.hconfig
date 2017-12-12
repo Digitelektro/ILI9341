@@ -1,0 +1,68 @@
+menu "ILI9341"
+
+enum DRV_ILI9341_MODES
+	"DRIVER_MODE_SPI" ||
+	"DRIVER_MODE_16BIT"
+	
+enum DRV_ILI9341_SPI_INSTANCE_INDEX_TYPE
+	"DRV_SPI_INDEX_0" ||
+	"DRV_SPI_INDEX_1" ||
+	"DRV_SPI_INDEX_2" ||
+	"DRV_SPI_INDEX_3" ||
+	"DRV_SPI_INDEX_4" ||
+	"DRV_SPI_INDEX_5"
+	
+
+config USE_DRV_GFX_ILI9341_NEEDED
+    bool
+	
+config USE_DRV_GFX_ILI9341
+    bool "Use ILI9341 Driver?"
+    select DRIVER
+    default n if !USE_DRV_GFX_ILI9341_NEEDED
+    default y if USE_DRV_GFX_ILI9341_NEEDED	
+
+config DRV_ILI9341_DRIVER_MODE
+    string "Driver Mode"
+    depends on USE_DRV_GFX_ILI9341
+    range DRV_ILI9341_MODES
+	default "DRIVER_MODE_SPI"
+	
+	
+config DRV_ILI9341_MODE_16BIT
+	bool	
+	depends on USE_DRV_GFX_ILI9341
+	default y if DRV_ILI9341_DRIVER_MODE = "DRIVER_MODE_16BIT"
+    default n if DRV_ILI9341_DRIVER_MODE = "DRIVER_MODE_SPI"
+    
+	
+config DRV_ILI9341_MODE_SPI
+	bool
+	depends on USE_DRV_GFX_ILI9341
+	default y if DRV_ILI9341_DRIVER_MODE = "DRIVER_MODE_SPI"
+    default n if DRV_ILI9341_DRIVER_MODE = "DRIVER_MODE_16BIT"
+
+config DRV_ILI9341_SPI_MODULE_INDEX
+    string "SPI driver module index"
+    depends on USE_DRV_GFX_ILI9341
+	depends on DRV_ILI9341_MODE_SPI
+    range DRV_ILI9341_SPI_INSTANCE_INDEX_TYPE
+	default "DRV_SPI_INDEX_0"	
+	
+endmenu
+
+ifblock USE_DRV_GFX_ILI9341
+
+add "<#include \"/framework/driver/gfx/controller/config/drv_gfx_init_data.c.ftl\">"  to list SYSTEM_INIT_C_DRIVER_INITIALIZATION_DATA
+add "<#include \"/framework/driver/gfx/controller/ili9341/config/drv_gfx_ili9341_init.c.ftl\">"  to list SYSTEM_INIT_C_SYS_INITIALIZE_DRIVERS
+add "<#include \"/framework/driver/gfx/controller/ili9341/templates/drv_ili9341_tasks.c.ftl\">"  to list SYSTEM_TASKS_C_CALL_DRIVER_TASKS
+add "<#include \"/framework/driver/gfx/controller/ili9341/config/drv_gfx_ili9341_config.h.ftl\">"  to list SYSTEM_CONFIG_H_DRIVER_CONFIGURATION 
+add "<#include \"/framework/driver/gfx/controller/ili9341/config/drv_gfx_ili9341_sys_object_data.ftl\">"  to list SYSTEM_DEFINITIONS_H_OBJECTS 
+add "<#include \"/framework/driver/gfx/controller/ili9341/config/drv_gfx_ili9341_definitions.h.ftl\">"  to list SYSTEM_DEFINITIONS_H_INCLUDES 
+
+file DRV_GFX_ILI9341_H "$HARMONY_VERSION_PATH/framework/driver/gfx/controller/ili9341/drv_gfx_ili9341.h" to "$PROJECT_HEADER_FILES/framework/driver/gfx/controller/gfx_ili9341/drv_gfx_ili9341.h"
+file DRV_GFX_CTRL_ILI9341_H "$HARMONY_VERSION_PATH/framework/driver/gfx/controller/drv_gfx_controller.h" to "$PROJECT_HEADER_FILES/framework/driver/gfx/controller/drv_gfx_controller.h"
+file DRV_GFX_COMMON_ILI9341_H "$HARMONY_VERSION_PATH/framework/driver/gfx/gfx_common.h" to "$PROJECT_HEADER_FILES/framework/driver/gfx/gfx_common.h"
+file DRV_GFX_ILI9341_C "$HARMONY_VERSION_PATH/framework/driver/gfx/controller/ili9341/src/drv_gfx_ili9341.c" to "$PROJECT_SOURCE_FILES/framework/driver/gfx/controller/gfx_ili9341/src/drv_gfx_ili9341.c"
+endif
+
