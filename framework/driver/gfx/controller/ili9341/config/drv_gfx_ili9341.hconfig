@@ -49,6 +49,77 @@ config DRV_ILI9341_SPI_MODULE_INDEX
     range DRV_ILI9341_SPI_INSTANCE_INDEX_TYPE
 	default "DRV_SPI_INDEX_0"	
 	
+config  DRV_ILI9341_RS_PORT_CHANNEL
+    string "LCD RS Pin Port"
+    depends on USE_DRV_GFX_ILI9341
+	depends on DRV_ILI9341_MODE_16BIT
+    range PORTS_CHANNEL
+    default "PORT_CHANNEL_E"
+    
+config  DRV_ILI9341_RS_BIT_POSITION
+    string "LCD RS Port Bit"
+    depends on USE_DRV_GFX_ILI9341
+	depends on DRV_ILI9341_MODE_16BIT
+    range PORTS_BIT_POS
+    default "PORTS_BIT_POS_7"
+	
+config  DRV_ILI9341_WR_PORT_CHANNEL
+    string "LCD WR Pin Port"
+    depends on USE_DRV_GFX_ILI9341
+	depends on DRV_ILI9341_MODE_16BIT
+    range PORTS_CHANNEL
+    default "PORT_CHANNEL_E"
+    
+config  DRV_ILI9341_WR_BIT_POSITION
+    string "LCD WR Port Bit"
+    depends on USE_DRV_GFX_ILI9341
+	depends on DRV_ILI9341_MODE_16BIT
+    range PORTS_BIT_POS
+    default "PORTS_BIT_POS_6"
+	
+config  DRV_ILI9341_RD_PORT_CHANNEL
+    string "LCD RD Pin Port"
+    depends on USE_DRV_GFX_ILI9341
+	depends on DRV_ILI9341_MODE_16BIT
+    range PORTS_CHANNEL
+    default "PORT_CHANNEL_E"
+    
+config  DRV_ILI9341_RD_BIT_POSITION
+    string "LCD RD Port Bit"
+    depends on USE_DRV_GFX_ILI9341
+	depends on DRV_ILI9341_MODE_16BIT
+    range PORTS_BIT_POS
+    default "PORTS_BIT_POS_5"
+	
+config  DRV_ILI9341_CS_PORT_CHANNEL
+    string "LCD CS Pin Port"
+    depends on USE_DRV_GFX_ILI9341
+	depends on DRV_ILI9341_MODE_16BIT
+    range PORTS_CHANNEL
+    default "PORT_CHANNEL_G"
+    
+config  DRV_ILI9341_CS_BIT_POSITION
+    string "LCD CS Port Bit"
+    depends on USE_DRV_GFX_ILI9341
+	depends on DRV_ILI9341_MODE_16BIT
+    range PORTS_BIT_POS
+    default "PORTS_BIT_POS_7"
+	
+config  DRV_ILI9341_REST_PORT_CHANNEL
+    string "LCD REST Pin Port"
+    depends on USE_DRV_GFX_ILI9341
+	depends on DRV_ILI9341_MODE_16BIT
+    range PORTS_CHANNEL
+    default "PORT_CHANNEL_G"
+    
+config  DRV_ILI9341_REST_BIT_POSITION
+    string "LCD REST Port Bit"
+    depends on USE_DRV_GFX_ILI9341
+	depends on DRV_ILI9341_MODE_16BIT
+    range PORTS_BIT_POS
+    default "PORTS_BIT_POS_8"
+
+	
 endmenu
 
 ifblock USE_DRV_GFX_ILI9341
