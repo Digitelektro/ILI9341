@@ -84,7 +84,7 @@ static DRV_GFX_CLIENT_OBJ drvILI9341Clients;
 void GFX_TMR_DelayMS(unsigned int delayMs);
 
 #define  LCD_DataPort LATB    
-/*  
+/*
 #define LCD_RS		LATEbits.LATE7  		 
 #define LCD_WR		LATEbits.LATE6  		  
 #define LCD_RD		LATEbits.LATE5  			     
@@ -106,7 +106,7 @@ void LCD_Writ_Bus(uint16_t data)
     LATEbits.LATE4 = data & 0b01;
 	//LCD_WR=0;
 	//LCD_WR=1; 
-	PLIB_PORTS_PinSet(PORTS_ID_0, LCD_WR_PORT, LCD_WR_BIT_POS);
+	PLIB_PORTS_PinClear(PORTS_ID_0, LCD_WR_PORT, LCD_WR_BIT_POS);
 	PLIB_PORTS_PinSet(PORTS_ID_0, LCD_WR_PORT, LCD_WR_BIT_POS);
 #endif
 }
@@ -393,7 +393,7 @@ SYS_MODULE_OBJ DRV_GFX_ILI9341_Initialize(const SYS_MODULE_INDEX   index, const 
 	PLIB_PORTS_PinSet(PORTS_ID_0, LCD_REST_PORT, LCD_REST_BIT_POS);
 	GFX_TMR_DelayMS(20);			
 	PLIB_PORTS_PinClear(PORTS_ID_0, LCD_CS_PORT, LCD_CS_BIT_POS);
-
+    
 	//************* Start Initial Sequence **********//
 	LCD_WR_REG(0xcf); 
 	LCD_WR_DATA(0x00);
