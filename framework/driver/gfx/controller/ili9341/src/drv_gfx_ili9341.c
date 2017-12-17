@@ -95,7 +95,7 @@ void GFX_TMR_DelayMS(unsigned int delayMs);
 void LCD_Writ_Bus(uint16_t data)   
 {
 #ifdef GFX_DRV_ILI9341_MODE_SPI
-    DRV_SPI_BUFFER_HANDLE spiBufferHandle = DRV_SPI_BufferAddWrite(drvILI9341Obj.drvSPIHandle, &data, 2, 0,0);
+    DRV_SPI_BUFFER_HANDLE spiBufferHandle = DRV_SPI_BufferAddWrite(drvILI9341Obj.drvSPIHandle, &data, 1, 0,0);
     while(DRV_SPI_BUFFER_EVENT_COMPLETE != DRV_SPI_BufferStatus (spiBufferHandle));
 #endif
     
@@ -113,40 +113,309 @@ void LCD_Writ_Bus(uint16_t data)
 
 
 
-void LCD_WR_DATA(uint16_t da)
+void LCD_WR_DATA(uint16_t data)
 {
     //LCD_RS=1;
 	PLIB_PORTS_PinSet(PORTS_ID_0, LCD_RS_PORT, LCD_RS_BIT_POS);
-	LCD_Writ_Bus(da);
+	LCD_Writ_Bus(data);
 }	
   
-void LCD_WR_REG(uint16_t da)	 
+void LCD_WR_REG(uint16_t data)	 
 {	
     //LCD_RS=0;
 	PLIB_PORTS_PinClear(PORTS_ID_0, LCD_RS_PORT, LCD_RS_BIT_POS);
-	LCD_Writ_Bus(da);
+	LCD_Writ_Bus(data);
 }
 
-void LCD_WR_REG_DATA(uint16_t reg,uint16_t da)
-{
-    LCD_WR_REG(reg);
-	LCD_WR_DATA(da);
-}
 
 void Address_set( uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2)
 { 
 	LCD_WR_REG(0x2A);
 	LCD_WR_DATA(x1>>8);
-	LCD_WR_DATA(x1);
+	LCD_WR_DATA(x1 & 0xFF);
 	LCD_WR_DATA(x2>>8);
-	LCD_WR_DATA(x2);
+	LCD_WR_DATA(x2 & 0xFF);
 	
 	LCD_WR_REG(0x2B);
 	LCD_WR_DATA(y1>>8);
-	LCD_WR_DATA(y1);
+	LCD_WR_DATA(y1 & 0xFF);
 	LCD_WR_DATA(y2>>8);
-	LCD_WR_DATA(y2);	
-	LCD_WR_REG(0x2c);					 						 
+	LCD_WR_DATA(y2 & 0xFF);	
+	LCD_WR_REG(0x2c);		
+}
+
+void Color_set(uint16_t Color)
+{
+#ifdef GFX_DRV_ILI9341_MODE_SPI
+    LCD_WR_DATA(Color>>8);
+#endif
+	LCD_WR_DATA(Color);
+}
+
+void ILI9341_Init()
+{
+	PLIB_PORTS_PinSet(PORTS_ID_0, LCD_CS_PORT, LCD_CS_BIT_POS);
+#ifdef GFX_DRV_ILI9341_MODE_16BIT
+	PLIB_PORTS_PinSet(PORTS_ID_0, LCD_RD_PORT, LCD_RD_BIT_POS);
+	PLIB_PORTS_PinSet(PORTS_ID_0, LCD_WR_PORT, LCD_WR_BIT_POS);
+#endif
+	PLIB_PORTS_PinClear(PORTS_ID_0, LCD_REST_PORT, LCD_REST_BIT_POS);
+	GFX_TMR_DelayMS(20);	
+	PLIB_PORTS_PinSet(PORTS_ID_0, LCD_REST_PORT, LCD_REST_BIT_POS);
+	GFX_TMR_DelayMS(20);	
+	PLIB_PORTS_PinClear(PORTS_ID_0, LCD_CS_PORT, LCD_CS_BIT_POS);
+   
+	//************* Start Initial Sequence **********//
+	LCD_WR_REG(0xcf); 
+	LCD_WR_DATA(0x00);
+	LCD_WR_DATA(0xc1);
+	LCD_WR_DATA(0x30);
+	
+	LCD_WR_REG(0xed); 
+	LCD_WR_DATA(0x64);
+	LCD_WR_DATA(0x03);
+	LCD_WR_DATA(0x12);
+	LCD_WR_DATA(0x81);
+	
+	LCD_WR_REG(0xcb); 
+	LCD_WR_DATA(0x39);
+	LCD_WR_DATA(0x2c);
+	LCD_WR_DATA(0x00);
+	LCD_WR_DATA(0x34);
+	LCD_WR_DATA(0x02);
+	
+	LCD_WR_REG(0xea); 
+	LCD_WR_DATA(0x00);
+	LCD_WR_DATA(0x00);
+	
+	LCD_WR_REG(0xe8); 
+	LCD_WR_DATA(0x85);
+	LCD_WR_DATA(0x10);
+	LCD_WR_DATA(0x79);
+	
+	LCD_WR_REG(0xC0); //Power control
+	LCD_WR_DATA(0x23); //VRH[5:0]
+	
+	LCD_WR_REG(0xC1); //Power control
+	LCD_WR_DATA(0x11); //SAP[2:0];BT[3:0]
+	
+	LCD_WR_REG(0xC2);
+	LCD_WR_DATA(0x11);
+	
+	LCD_WR_REG(0xC5); //VCM control
+	LCD_WR_DATA(0x3d);
+	LCD_WR_DATA(0x30);
+	
+	LCD_WR_REG(0xc7); 
+	LCD_WR_DATA(0xaa);
+	
+	LCD_WR_REG(0x3A); 
+	LCD_WR_DATA(0x55);
+	
+	LCD_WR_REG(0x36); // Memory Access Control, screen rotation
+    switch(drvILI9341Obj.initData->orientation)
+    {
+        case 90:
+            LCD_WR_DATA(0x08);
+            break;
+        case 180:
+            LCD_WR_DATA(0x68);
+            break;
+        case 270:
+            LCD_WR_DATA(0x88);
+            break;
+        default:
+            LCD_WR_DATA(0xA8);
+            break;
+                
+    }
+
+	LCD_WR_REG(0xB1); // Frame Rate Control
+	LCD_WR_DATA(0x00);
+	LCD_WR_DATA(0x11);
+	
+	LCD_WR_REG(0xB6); // Display Function Control
+	LCD_WR_DATA(0x0a);
+	LCD_WR_DATA(0xa2);
+	
+	LCD_WR_REG(0xF2); // 3Gamma Function Disable
+	LCD_WR_DATA(0x00);
+	
+	LCD_WR_REG(0xF7);
+	LCD_WR_DATA(0x20);
+	
+	LCD_WR_REG(0xF1);
+	LCD_WR_DATA(0x01);
+	LCD_WR_DATA(0x30);
+	
+	LCD_WR_REG(0x26); //Gamma curve selected
+	LCD_WR_DATA(0x01);
+	
+	LCD_WR_REG(0xE0); //Set Gamma
+	LCD_WR_DATA(0x0f);
+	LCD_WR_DATA(0x3f);
+	LCD_WR_DATA(0x2f);
+	LCD_WR_DATA(0x0c);
+	LCD_WR_DATA(0x10);
+	LCD_WR_DATA(0x0a);
+	LCD_WR_DATA(0x53);
+	LCD_WR_DATA(0xd5);
+	LCD_WR_DATA(0x40);
+	LCD_WR_DATA(0x0a);
+	LCD_WR_DATA(0x13);
+	LCD_WR_DATA(0x03);
+	LCD_WR_DATA(0x08);
+	LCD_WR_DATA(0x03);
+	LCD_WR_DATA(0x00);
+	
+	LCD_WR_REG(0xE1); //Set Gamma
+	LCD_WR_DATA(0x00);
+	LCD_WR_DATA(0x00);
+	LCD_WR_DATA(0x10);
+	LCD_WR_DATA(0x03);
+	LCD_WR_DATA(0x0f);
+	LCD_WR_DATA(0x05);
+	LCD_WR_DATA(0x2c);
+	LCD_WR_DATA(0xa2);
+	LCD_WR_DATA(0x3f);
+	LCD_WR_DATA(0x05);
+	LCD_WR_DATA(0x0e);
+	LCD_WR_DATA(0x0c);
+	LCD_WR_DATA(0x37);
+	LCD_WR_DATA(0x3c);
+	LCD_WR_DATA(0x0F);
+	LCD_WR_REG(0x11); 
+	GFX_TMR_DelayMS(80);
+	LCD_WR_REG(0x29); //display on
+    
+ /*
+    LCD_WR_REG(0xEF);
+    LCD_WR_DATA(0x03);
+    LCD_WR_DATA(0x80);
+    LCD_WR_DATA(0x02);
+
+    LCD_WR_REG(0xCF);
+    LCD_WR_DATA(0x00);
+    LCD_WR_DATA(0XC1);
+    LCD_WR_DATA(0X30);
+
+    LCD_WR_REG(0xED);
+    LCD_WR_DATA(0x64);
+    LCD_WR_DATA(0x03);
+    LCD_WR_DATA(0X12);
+    LCD_WR_DATA(0X81);
+
+    LCD_WR_REG(0xE8);
+    LCD_WR_DATA(0x85);
+    LCD_WR_DATA(0x00);
+    LCD_WR_DATA(0x78);
+
+    LCD_WR_REG(0xCB);
+    LCD_WR_DATA(0x39);
+    LCD_WR_DATA(0x2C);
+    LCD_WR_DATA(0x00);
+    LCD_WR_DATA(0x34);
+    LCD_WR_DATA(0x02);
+
+    LCD_WR_REG(0xF7);
+    LCD_WR_DATA(0x20);
+
+    LCD_WR_REG(0xEA);
+    LCD_WR_DATA(0x00);
+    LCD_WR_DATA(0x00);
+
+    LCD_WR_REG(ILI9341_PWCTR1);    //Power control
+    LCD_WR_DATA(0x23);   //VRH[5:0]
+
+    LCD_WR_REG(ILI9341_PWCTR2);    //Power control
+    LCD_WR_DATA(0x10);   //SAP[2:0];BT[3:0]
+
+    LCD_WR_REG(ILI9341_VMCTR1);    //VCM control
+    LCD_WR_DATA(0x3e);
+    LCD_WR_DATA(0x28);
+
+    LCD_WR_REG(ILI9341_VMCTR2);    //VCM control2
+    LCD_WR_DATA(0x86);  //--
+
+    LCD_WR_REG(ILI9341_MADCTL);    // Memory Access Control, screen rotation
+    switch(drvILI9341Obj.initData->orientation)
+    {
+        case 90:
+            LCD_WR_DATA(0x08);
+            break;
+        case 180:
+            LCD_WR_DATA(0x68);
+            break;
+        case 270:
+            LCD_WR_DATA(0x88);
+            break;
+        default:
+            LCD_WR_DATA(0xA8);
+            break;
+                
+    }
+
+    LCD_WR_REG(ILI9341_VSCRSADD); // Vertical scroll
+    LCD_WR_DATA(0, 2);                 // Zero
+
+    LCD_WR_REG(ILI9341_PIXFMT);
+    LCD_WR_DATA(0x55);
+
+    LCD_WR_REG(ILI9341_FRMCTR1);
+    LCD_WR_DATA(0x00);
+    LCD_WR_DATA(0x18);
+
+    LCD_WR_REG(ILI9341_DFUNCTR);    // Display Function Control
+    LCD_WR_DATA(0x08);
+    LCD_WR_DATA(0x82);
+    LCD_WR_DATA(0x27);
+
+    LCD_WR_REG(0xF2);    // 3Gamma Function Disable
+    LCD_WR_DATA(0x00);
+
+    LCD_WR_REG(ILI9341_GAMMASET);    //Gamma curve selected
+    LCD_WR_DATA(0x01);
+
+    LCD_WR_REG(ILI9341_GMCTRP1);    //Set Gamma
+    LCD_WR_DATA(0x0F);
+    LCD_WR_DATA(0x31);
+    LCD_WR_DATA(0x2B);
+    LCD_WR_DATA(0x0C);
+    LCD_WR_DATA(0x0E);
+    LCD_WR_DATA(0x08);
+    LCD_WR_DATA(0x4E);
+    LCD_WR_DATA(0xF1);
+    LCD_WR_DATA(0x37);
+    LCD_WR_DATA(0x07);
+    LCD_WR_DATA(0x10);
+    LCD_WR_DATA(0x03);
+    LCD_WR_DATA(0x0E);
+    LCD_WR_DATA(0x09);
+    LCD_WR_DATA(0x00);
+
+    LCD_WR_REG(ILI9341_GMCTRN1);    //Set Gamma
+    LCD_WR_DATA(0x00);
+    LCD_WR_DATA(0x0E);
+    LCD_WR_DATA(0x14);
+    LCD_WR_DATA(0x03);
+    LCD_WR_DATA(0x11);
+    LCD_WR_DATA(0x07);
+    LCD_WR_DATA(0x31);
+    LCD_WR_DATA(0xC1);
+    LCD_WR_DATA(0x48);
+    LCD_WR_DATA(0x08);
+    LCD_WR_DATA(0x0F);
+    LCD_WR_DATA(0x0C);
+    LCD_WR_DATA(0x31);
+    LCD_WR_DATA(0x36);
+    LCD_WR_DATA(0x0F);
+
+    LCD_WR_REG(ILI9341_SLPOUT);    //Exit Sleep
+    GFX_TMR_DelayMS(120);
+    LCD_WR_REG(ILI9341_DISPON);    //Display on
+    GFX_TMR_DelayMS(120);
+    */
+    
 }
 
 // *****************************************************************************
@@ -190,7 +459,7 @@ DRV_GFX_HANDLE DRV_GFX_ILI9341_Open(const SYS_MODULE_INDEX index, const DRV_IO_I
 	}
 	else
 	{
-
+        ILI9341_Init();
 		client = &drvILI9341Clients;
 		client->inUse = true;
 		client->drvObj = &drvILI9341Obj;
@@ -239,9 +508,8 @@ void DRV_GFX_ILI9341_Close(DRV_HANDLE handle)
 		}
 		else
 		{
-			//            SYS_DEBUG(0, "Client Handle no inuse");
+			//SYS_DEBUG(0, "Client Handle no inuse");
 		}
-
 	}
 	return;
 }
@@ -252,14 +520,6 @@ Function:
 	void DRV_GFX_ILI9341_MaxXGet()
 Summary:
 	Returns x extent of the display.
-Description:
-Precondition:
-Parameters:
-Returns:
-Example:
-<code>
-<code>
-Remarks:
 */
 uint16_t DRV_GFX_ILI9341_MaxXGet()
 {
@@ -273,20 +533,6 @@ void GFX_MaxYGet()
 
 Summary:
 Returns y extent of the display.
-
-Description:
-
-Precondition:
-
-Parameters:
-
-Returns:
-
-Example:
-<code>
-<code>
-
-Remarks:
 */
 uint16_t DRV_GFX_ILI9341_MaxYGet()
 {
@@ -352,7 +598,7 @@ SYS_MODULE_OBJ DRV_GFX_ILI9341_Initialize(const SYS_MODULE_INDEX   index, const 
 	dObj->state = SYS_STATUS_BUSY;
 	dObj->initData = (DRV_GFX_INIT *)init;
 #ifdef GFX_DRV_ILI9341_MODE_SPI
-        drvILI9341Obj.drvSPIHandle = DRV_SPI_Open(DRV_ILI9341_SPI_MODULE_INDEX, DRV_IO_INTENT_READWRITE | DRV_IO_INTENT_BLOCKING );
+        drvILI9341Obj.drvSPIHandle = DRV_SPI_Open(DRV_ILI9341_SPI_MODULE_INDEX, DRV_IO_INTENT_READWRITE);
         if(drvILI9341Obj.drvSPIHandle == DRV_HANDLE_INVALID)
         {
             SYS_ASSERT(false, "ILI9341 Driver: Failed to open SPI Driver");
@@ -375,152 +621,7 @@ SYS_MODULE_OBJ DRV_GFX_ILI9341_Initialize(const SYS_MODULE_INDEX   index, const 
         drvILI9341Obj.maxY = verticalSize - 1;
     }
     
-	/*
-    LCD_CS =1; 
-	LCD_RD=1;
-	LCD_WR=1;
-	LCD_REST=0;
-	GFX_TMR_DelayMS(20);	
-	LCD_REST=1;	
-	GFX_TMR_DelayMS(20);			
-	LCD_CS =0;  
-	*/
-	PLIB_PORTS_PinSet(PORTS_ID_0, LCD_CS_PORT, LCD_CS_BIT_POS);
-	PLIB_PORTS_PinSet(PORTS_ID_0, LCD_RD_PORT, LCD_RD_BIT_POS);
-	PLIB_PORTS_PinSet(PORTS_ID_0, LCD_WR_PORT, LCD_WR_BIT_POS);
-	PLIB_PORTS_PinClear(PORTS_ID_0, LCD_REST_PORT, LCD_REST_BIT_POS);
-	GFX_TMR_DelayMS(20);	
-	PLIB_PORTS_PinSet(PORTS_ID_0, LCD_REST_PORT, LCD_REST_BIT_POS);
-	GFX_TMR_DelayMS(20);			
-	PLIB_PORTS_PinClear(PORTS_ID_0, LCD_CS_PORT, LCD_CS_BIT_POS);
     
-	//************* Start Initial Sequence **********//
-	LCD_WR_REG(0xcf); 
-	LCD_WR_DATA(0x00);
-	LCD_WR_DATA(0xc1);
-	LCD_WR_DATA(0x30);
-	
-	LCD_WR_REG(0xed); 
-	LCD_WR_DATA(0x64);
-	LCD_WR_DATA(0x03);
-	LCD_WR_DATA(0x12);
-	LCD_WR_DATA(0x81);
-	
-	LCD_WR_REG(0xcb); 
-	LCD_WR_DATA(0x39);
-	LCD_WR_DATA(0x2c);
-	LCD_WR_DATA(0x00);
-	LCD_WR_DATA(0x34);
-	LCD_WR_DATA(0x02);
-	
-	LCD_WR_REG(0xea); 
-	LCD_WR_DATA(0x00);
-	LCD_WR_DATA(0x00);
-	
-	LCD_WR_REG(0xe8); 
-	LCD_WR_DATA(0x85);
-	LCD_WR_DATA(0x10);
-	LCD_WR_DATA(0x79);
-	
-	LCD_WR_REG(0xC0); //Power control
-	LCD_WR_DATA(0x23); //VRH[5:0]
-	
-	LCD_WR_REG(0xC1); //Power control
-	LCD_WR_DATA(0x11); //SAP[2:0];BT[3:0]
-	
-	LCD_WR_REG(0xC2);
-	LCD_WR_DATA(0x11);
-	
-	LCD_WR_REG(0xC5); //VCM control
-	LCD_WR_DATA(0x3d);
-	LCD_WR_DATA(0x30);
-	
-	LCD_WR_REG(0xc7); 
-	LCD_WR_DATA(0xaa);
-	
-	LCD_WR_REG(0x3A); 
-	LCD_WR_DATA(0x55);
-	
-	LCD_WR_REG(0x36); // Memory Access Control, screen rotation
-    switch(drvILI9341Obj.initData->orientation)
-    {
-        case 90:
-            LCD_WR_DATA(0x08);
-            break;
-        case 180:
-            LCD_WR_DATA(0x68);
-            break;
-        case 270:
-            LCD_WR_DATA(0x88);
-            break;
-        default:
-            LCD_WR_DATA(0xA8);
-            break;
-                
-    }
-    
-
-	LCD_WR_REG(0xB1); // Frame Rate Control
-	LCD_WR_DATA(0x00);
-	LCD_WR_DATA(0x11);
-	
-	LCD_WR_REG(0xB6); // Display Function Control
-	LCD_WR_DATA(0x0a);
-	LCD_WR_DATA(0xa2);
-	
-	LCD_WR_REG(0xF2); // 3Gamma Function Disable
-	LCD_WR_DATA(0x00);
-	
-	LCD_WR_REG(0xF7);
-	LCD_WR_DATA(0x20);
-	
-	LCD_WR_REG(0xF1);
-	LCD_WR_DATA(0x01);
-	LCD_WR_DATA(0x30);
-	
-	LCD_WR_REG(0x26); //Gamma curve selected
-	LCD_WR_DATA(0x01);
-	
-	LCD_WR_REG(0xE0); //Set Gamma
-	LCD_WR_DATA(0x0f);
-	LCD_WR_DATA(0x3f);
-	LCD_WR_DATA(0x2f);
-	LCD_WR_DATA(0x0c);
-	LCD_WR_DATA(0x10);
-	LCD_WR_DATA(0x0a);
-	LCD_WR_DATA(0x53);
-	LCD_WR_DATA(0xd5);
-	LCD_WR_DATA(0x40);
-	LCD_WR_DATA(0x0a);
-	LCD_WR_DATA(0x13);
-	LCD_WR_DATA(0x03);
-	LCD_WR_DATA(0x08);
-	LCD_WR_DATA(0x03);
-	LCD_WR_DATA(0x00);
-	
-	LCD_WR_REG(0xE1); //Set Gamma
-	LCD_WR_DATA(0x00);
-	LCD_WR_DATA(0x00);
-	LCD_WR_DATA(0x10);
-	LCD_WR_DATA(0x03);
-	LCD_WR_DATA(0x0f);
-	LCD_WR_DATA(0x05);
-	LCD_WR_DATA(0x2c);
-	LCD_WR_DATA(0xa2);
-	LCD_WR_DATA(0x3f);
-	LCD_WR_DATA(0x05);
-	LCD_WR_DATA(0x0e);
-	LCD_WR_DATA(0x0c);
-	LCD_WR_DATA(0x37);
-	LCD_WR_DATA(0x3c);
-	LCD_WR_DATA(0x0F);
-	LCD_WR_REG(0x11); 
-	GFX_TMR_DelayMS(80);
-	LCD_WR_REG(0x29); //display on
-    
-    
-    
-	
 
 	/* Save the index of the driver. Important to know this
 	as we are using reference based accessing */
@@ -628,17 +729,11 @@ void  DRV_GFX_ILI9341_BarFill(uint16_t left, uint16_t top, uint16_t right, uint1
 	for(i=top;i<=bottom;i++)
 	{													   	 	
 		for(j=left;j<=right;j++)
-            LCD_WR_DATA(drvILI9341Obj.initData->color); 	    
-	}
-    /*if(left == 0 && top == 0 && right == 0 && bottom == 0)
-    {
-        Address_set(0,0,240,320);      
-        for(i=0;i<=320;i++)
-        {													   	 	
-            for(j=0;j<=240;j++)
-                LCD_WR_DATA(drvILI9341Obj.initData->color); 	    
+        {
+            Color_set(drvILI9341Obj.initData->color); 	   
         }
-    }*/
+        Nop();
+	}
 
 }
 
@@ -663,7 +758,7 @@ Output:
 void DRV_GFX_ILI9341_PixelPut(uint16_t x, uint16_t y)
 {
     Address_set(x,y,x,y);
-	LCD_WR_DATA(drvILI9341Obj.initData->color);
+	Color_set(drvILI9341Obj.initData->color);
 
 }
 
@@ -693,7 +788,7 @@ void  DRV_GFX_ILI9341_PixelArrayPut(uint16_t *color, uint16_t x, uint16_t y, uin
 	for(i=0;i<=lineCount;i++)
 	{													   	 	
 		for(j=0;j<=count;j++)
-            LCD_WR_DATA(color[j]); 	    
+            Color_set(color[j]); 	    
 	} 		
 
 }
@@ -745,9 +840,7 @@ uint16_t  DRV_GFX_ILI9341_Busy(uint8_t instance)
 {
 
 	uint8_t status = 0x00;
-
 	//Get status
-
 	return((bool)(!status));
 
 }
