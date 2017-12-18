@@ -110,10 +110,11 @@ void ILI9341_Write_Bus(uint16_t data)
 #endif
     
 #ifdef GFX_DRV_ILI9341_MODE_16BIT
-	LCD_DataPort = data;	
-    LATEbits.LATE3 = data & 0b01;
-    data = data >> 1;
-    LATEbits.LATE4 = data & 0b01;
+	LCD_DataPort = data;
+    /*Uncomment the following three lines if you want to use debug pins, and connect the ILI9341 two LSB bit to the defined I/O PIN*/
+    //LATEbits.LATE3 = data & 0b01; //Use RE3 pin insted of RB0 pin
+    //data = data >> 1; 
+    //LATEbits.LATE4 = data & 0b01; //Use RE4 pin insted of RB1 pin
 	PLIB_PORTS_PinClear(PORTS_ID_0, LCD_WR_PORT, LCD_WR_BIT_POS);
 	PLIB_PORTS_PinSet(PORTS_ID_0, LCD_WR_PORT, LCD_WR_BIT_POS);
 #endif
@@ -217,6 +218,7 @@ void ILI9341_Init()
 	PLIB_PORTS_PinSet(PORTS_ID_0, LCD_REST_PORT, LCD_REST_BIT_POS);
 	GFX_TMR_DelayMS(20);	
 	PLIB_PORTS_PinClear(PORTS_ID_0, LCD_CS_PORT, LCD_CS_BIT_POS);
+    
 	//************* Start Initial Sequence **********//
 	ILI9341_WR_REG(0xcf); 
 	ILI9341_WR_DATA(0x00);
