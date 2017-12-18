@@ -2,7 +2,7 @@
 
 
 <h3>Description</h3>
-<p>I wrote this driver to use ILI9341 with MPLAB harmony graphics library. Currently it is supporting only 16bit mode via PORTB, and SPI mode with static SPI driver.<p>
+<p>I have written this driver to use ILI9341 with MPLAB Harmony graphics library. Currently it is supporting only 16bit mode via PORTB, and SPI mode with static SPI driver.<p>
 
 
 <h3>Features</h3>
@@ -23,4 +23,7 @@
 </ul>
 
 <h3>Future</h3>
-I will implement 8bit mode, and use PMP module instead of PORTB
+<ul>
+	<li>Support 8bit mode</li>
+	<li>Use PMP module insted of PORTB</li>
+</ul>
