@@ -15,7 +15,7 @@
 
 <h3>How to use</h3>
 <ul>
-	<li>Download and copy it to harmony installation path(overwrite files)</li>
+	<li>Download and copy it to harmony installation directory (overwrite files)</li>
 	<li>Set appropriate pins to Digital Output</li>
 	<li>In the case of SPI configure it to static mode</li>
 	<li>Set up graphics library</li>
