@@ -106,7 +106,44 @@ void ILI9341_Write_Bus(uint16_t data)
     //while(DRV_SPI_BUFFER_EVENT_COMPLETE != DRV_SPI_BufferStatus (spiBufferHandle));
     uint8_t received;
     //Use Faster Blocking function to send data
-    DRV_SPI0_BufferAddWriteRead(&data, &received, 1);
+    switch(DRV_ILI9341_SPI_MODULE_INDEX)
+    {
+        case DRV_SPI_INDEX_0:
+        {
+            DRV_SPI0_BufferAddWriteRead(&data, &received, 1);
+            break;
+        }
+        case DRV_SPI_INDEX_1:
+        {
+            DRV_SPI1_BufferAddWriteRead(&data, &received, 1);
+            break;
+        }
+        case DRV_SPI_INDEX_2:
+        {
+            DRV_SPI2_BufferAddWriteRead(&data, &received, 1);
+            break;
+        }
+        case DRV_SPI_INDEX_3:
+        {
+            DRV_SPI3_BufferAddWriteRead(&data, &received, 1);
+            break;
+        }
+        case DRV_SPI_INDEX_4:
+        {
+            DRV_SPI4_BufferAddWriteRead(&data, &received, 1);
+            break;
+        }
+        case DRV_SPI_INDEX_5:
+        {
+            DRV_SPI5_BufferAddWriteRead(&data, &received, 1);
+            break;
+        }
+        default:
+        {
+            break;
+        }
+    }
+    
 #endif
     
 #ifdef GFX_DRV_ILI9341_MODE_16BIT
