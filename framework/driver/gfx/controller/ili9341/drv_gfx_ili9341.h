@@ -104,44 +104,6 @@ typedef struct
 // *****************************************************************************
 // *****************************************************************************
 
-// *****************************************************************************
-/*
-  Function: uint8_t DRV_GFX_ILI9341_SetReg(uint16_t index, uint8_t value)
-
-  Summary:
-    updates graphics controller register value (byte access)
-
-  Description:
-    none
-
-  Input:
-    index - register number 
-    value - value to write to register
-
-  Output:
-    1 - call was not passed
-    0 - call was passed
-*/
-uint16_t DRV_GFX_ILI9341_SetReg(uint16_t index, uint8_t value);
-
-// *****************************************************************************
-/*
-  Function: uint8_t DRV_GFX_ILI9341_GetReg(uint16_t index, uint8_t *data)
-
-  Summary:
-    returns graphics controller register value (byte access)
-
-  Description:
-    none
-
-  Input:
-    index - register number 
-    *data - array to store data
-
-  Output:
-    0 - when call was passed
-*/
-uint8_t  DRV_GFX_ILI9341_GetReg(uint16_t  index, uint8_t *data);
 
 /*********************************************************************
   Function:
