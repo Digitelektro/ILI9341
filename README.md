@@ -8,8 +8,8 @@
 <h3>Features</h3>
 <ul>
 	<li>Configurable through MPLAB Harmony Configurator</li>
-	<li>16bit paralel mode</li>
-	<li>4pin SPI mode (tested up to 50Mhz data rate</li>
+	<li>16bit parallel mode</li>
+	<li>4pin SPI mode (tested up to 50Mhz data rate)</li>
 </ul>
 
 
@@ -26,5 +26,5 @@
 <h3>Future</h3>
 <ul>
 	<li>Support 8bit mode</li>
-	<li>Use PMP module insted of PORTB</li>
+	<li>Use PMP module instead of PORTB</li>
 </ul>
