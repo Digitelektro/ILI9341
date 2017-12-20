@@ -18,7 +18,7 @@
 	<li>Download and copy it to harmony installation directory (overwrite files)</li>
 	<li>Set appropriate pins to Digital Output</li>
 	<li>In the case of SPI configure it to static mode</li>
-	<li>Select custom display with corresponding resolution settings and orientation (other display settings doesn't affect the driver)</li>
+	<li>Select ILI9341 display under Graphics Displays</li>
 	<li>Set up graphics library</li>
 	<li>Compile and enjoy</li>
 </ul>
