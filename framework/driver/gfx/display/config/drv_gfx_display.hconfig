@@ -1,0 +1,500 @@
+menu "Graphics Displays"
+
+enum DRV_GFX_ORIENTATION
+	"0"
+	|| "90"
+	|| "180"
+	|| "270"
+
+enum DRV_GFX_DISPLAYS
+    "Truly 7-inch 800x480 (WVGA)"
+    || "Truly 5.7-inch 640x480 (VGA)"
+    || "Truly 3.2-inch 240x320 (QVGA)"
+    || "Powertip 4.3-inch 480x272 (WQVGA)"
+    || "LTS 4.3-inch 480x272 (WQVGA) with RTP"
+    || "Newhaven 5.0-inch 800x480 (WVGA) with PCAP"
+    || "Newhaven 4.3-inch 480x272 (WQVGA) with PCAP"
+    || "Crystal Fontz 2-inch 176x220"
+    || "Custom Display"
+	|| "ILI9341 Display"
+
+enum DRV_GFX_DISP_LCD_TYPES
+    "GFX_LCD_TFT"
+
+config USE_GFX_TRULY_7_800X480_NEEDED
+    bool
+
+config USE_GFX_TRULY_57_640X480_NEEDED
+    bool
+
+config USE_GFX_TRULY_32_240X320_NEEDED
+    bool
+
+config USE_GFX_POWERTIP_43_480X272_NEEDED
+    bool
+
+config USE_GFX_LTS_43_480X272_RTP_NEEDED
+    bool
+
+config USE_GFX_NEWHAVEN_50_800X480_PCAP_NEEDED
+    bool
+
+config USE_GFX_NEWHAVEN_43_480X272_PCAP_NEEDED
+    bool
+
+config USE_GFX_CRYSTAL_2_172x220_NEEDED
+    bool
+
+	
+config USE_DRV_GFX_DISPLAY
+    bool "Use Graphics Display?"
+    default y if USE_GFX_TRULY_7_800X480_NEEDED
+    default y if USE_GFX_TRULY_57_640X480_NEEDED
+    default y if USE_GFX_TRULY_32_240X320_NEEDED
+    default y if USE_GFX_POWERTIP_43_480X272_NEEDED
+    default y if USE_GFX_LTS_43_480X272_RTP_NEEDED
+    default y if USE_GFX_NEWHAVEN_50_800X480_PCAP_NEEDED
+    default y if USE_GFX_NEWHAVEN_43_480X272_PCAP_NEEDED
+    default y if USE_GFX_CRYSTAL_2_172x220_NEEDED
+    default n
+    ---help---
+     IDH_HTML_Graphics_Driver_Library
+    ---endhelp---
+
+config DRV_GFX_DISPLAY_USED
+    string "Select Display"
+    depends on USE_DRV_GFX_DISPLAY
+    range DRV_GFX_DISPLAYS
+    default "Truly 7-inch 800x480 (WVGA)" if USE_GFX_TRULY_7_800X480_NEEDED
+    default "Truly 5.7-inch 640x480 (VGA)" if USE_GFX_TRULY_57_640X480_NEEDED
+    default "Truly 3.2-inch 240x320 (QVGA)" if USE_GFX_TRULY_32_240X320_NEEDED
+    default "Powertip 4.3-inch 480x272 (WQVGA)" if USE_GFX_POWERTIP_43_480X272_NEEDED
+    default "LTS 4.3-inch 480x272 (WQVGA) with RTP" if USE_GFX_LTS_43_480X272_RTP_NEEDED
+    default "Newhaven 5.0-inch 800x480 (WVGA) with PCAP" if USE_GFX_NEWHAVEN_50_800X480_PCAP_NEEDED
+    default "Newhaven 4.3-inch 480x272 (WQVGA) with PCAP" if USE_GFX_NEWHAVEN_43_480X272_PCAP_NEEDED
+    default "Crystal Fontz 2-inch 176x220" if USE_GFX_CRYSTAL_2_172x220_NEEDED
+	default "Custom Display"
+    ---help---
+     IDH_HTML_Graphics_Driver_Library
+    ---endhelp---
+
+execute GFX_DISPLAY_EXEC
+	depends on USE_DRV_GFX_DISPLAY
+    prompt "Launch Display Manager"
+    default "displayManager"
+    ---help---
+     IDH_HTML_Graphics_Driver_Library
+    ---endhelp---
+
+config USE_GFX_TRULY_7_800X480
+    bool
+	depends on USE_DRV_GFX_DISPLAY
+    default y if DRV_GFX_DISPLAY_USED =  "Truly 7-inch 800x480 (WVGA)"
+    default n
+
+config USE_GFX_TRULY_57_640X480
+    bool
+	depends on USE_DRV_GFX_DISPLAY
+    default y if DRV_GFX_DISPLAY_USED =  "Truly 5.7-inch 640x480 (VGA)"
+    default n
+
+config USE_GFX_TRULY_32_240X320
+    bool
+    select USE_DRV_GFX_SSD1289_NEEDED
+	depends on USE_DRV_GFX_DISPLAY
+    default y if DRV_GFX_DISPLAY_USED =  "Truly 3.2-inch 240x320 (QVGA)"
+    default n
+
+config USE_GFX_POWERTIP_43_480X272
+    bool
+	depends on USE_DRV_GFX_DISPLAY
+    default y if DRV_GFX_DISPLAY_USED =  "Powertip 4.3-inch 480x272 (WQVGA)"
+    default n
+
+config USE_GFX_LTS_43_480X272_RTP
+    bool
+	depends on USE_DRV_GFX_DISPLAY
+    default y if DRV_GFX_DISPLAY_USED =  "LTS 4.3-inch 480x272 (WQVGA) with RTP"
+    default n
+
+config USE_GFX_NEWHAVEN_50_800X480_PCAP
+    bool
+	depends on USE_DRV_GFX_DISPLAY
+    default y if DRV_GFX_DISPLAY_USED = "Newhaven 5.0-inch 800x480 (WVGA) with PCAP"
+    default n
+
+config USE_GFX_NEWHAVEN_43_480X272_PCAP
+    bool
+	depends on USE_DRV_GFX_DISPLAY
+    default y if DRV_GFX_DISPLAY_USED = "Newhaven 4.3-inch 480x272 (WQVGA) with PCAP"
+    default n
+
+config USE_GFX_CRYSTAL_2_172x220
+    bool
+	depends on USE_DRV_GFX_DISPLAY
+    default y if DRV_GFX_DISPLAY_USED = "Crystal Fontz 2-inch 176x220"
+    default n
+
+config USE_GFX_CUSTOM_DISPLAY
+	bool
+	depends on USE_DRV_GFX_DISPLAY
+	default y if DRV_GFX_DISPLAY_USED = "Custom Display"
+	default n
+
+config USE_GFX_ILI9341_DISPLAY
+	bool
+	select USE_DRV_GFX_ILI9341_NEEDED
+	depends on USE_DRV_GFX_DISPLAY
+	default y if DRV_GFX_DISPLAY_USED = "ILI9341 Display"
+	default n	
+	
+menu "Display Settings"
+
+config DRV_GFX_DISP_HOR_RESOLUTION
+    int "Horizontal Resolution (pixels)"
+    depends on USE_DRV_GFX_DISPLAY
+    default 800 if USE_GFX_TRULY_7_800X480
+    default 640 if USE_GFX_TRULY_57_640X480
+    default 240 if USE_GFX_TRULY_32_240X320
+    default 480 if USE_GFX_POWERTIP_43_480X272
+    default 480 if USE_GFX_LTS_43_480X272_RTP
+    default 800 if USE_GFX_NEWHAVEN_50_800X480_PCAP
+    default 480 if USE_GFX_NEWHAVEN_43_480X272_PCAP
+    default 176 if USE_GFX_CRYSTAL_2_172x220
+	default 240 if USE_GFX_ILI9341_DISPLAY
+	default 480
+
+config DRV_GFX_DISP_VER_RESOLUTION
+    int "Vertical Resolution (pixels)"
+    depends on USE_DRV_GFX_DISPLAY
+    default 480 if USE_GFX_TRULY_7_800X480
+    default 480 if USE_GFX_TRULY_57_640X480
+    default 320 if USE_GFX_TRULY_32_240X320
+    default 272 if USE_GFX_POWERTIP_43_480X272
+    default 272 if USE_GFX_LTS_43_480X272_RTP
+    default 480 if USE_GFX_NEWHAVEN_50_800X480_PCAP
+    default 272 if USE_GFX_NEWHAVEN_43_480X272_PCAP
+    default 220 if USE_GFX_CRYSTAL_2_172x220
+	default 320 if USE_GFX_ILI9341_DISPLAY
+	default 272
+
+config DRV_GFX_DISP_TOTAL_PIXELS
+	int "Total Pixels (pixels)"
+    depends on USE_DRV_GFX_DISPLAY
+	persistent
+    default 384000 if USE_GFX_TRULY_7_800X480
+    default 307200 if USE_GFX_TRULY_57_640X480
+    default 76800 if USE_GFX_TRULY_32_240X320
+    default 130560 if USE_GFX_POWERTIP_43_480X272
+    default 130560 if USE_GFX_LTS_43_480X272_RTP
+    default 384000 if USE_GFX_NEWHAVEN_50_800X480_PCAP
+    default 130560 if USE_GFX_NEWHAVEN_43_480X272_PCAP
+    default 37840 if USE_GFX_CRYSTAL_2_172x220
+	default 76800 if USE_GFX_ILI9341_DISPLAY
+	default 130560
+
+config DRV_GFX_DISP_ORIENTATION
+    string "Orientation"
+    depends on USE_DRV_GFX_DISPLAY
+    default "0"  if USE_GFX_TRULY_7_800X480
+    default "0"  if USE_GFX_TRULY_57_640X480
+    default "90" if USE_GFX_TRULY_32_240X320
+    default "0"  if USE_GFX_POWERTIP_43_480X272
+    default "0"  if USE_GFX_LTS_43_480X272_RTP
+    default "0"  if USE_GFX_NEWHAVEN_50_800X480_PCAP
+    default "0"  if USE_GFX_NEWHAVEN_43_480X272_PCAP
+    default "90" if USE_GFX_CRYSTAL_2_172x220
+	default "90" if USE_GFX_ILI9341_DISPLAY
+    range DRV_GFX_ORIENTATION
+	default "0"
+
+config DRV_GFX_DISP_HOR_PULSE_WIDTH
+    int "Horizontal Pulse Width (pixel clock cycle)"
+    depends on USE_DRV_GFX_DISPLAY
+    default 128 if USE_GFX_TRULY_7_800X480
+    default 30 if USE_GFX_TRULY_57_640X480
+    default 25 if USE_GFX_TRULY_32_240X320
+    default 42 if USE_GFX_POWERTIP_43_480X272
+    default 41 if USE_GFX_LTS_43_480X272_RTP
+    default 48 if USE_GFX_NEWHAVEN_50_800X480_PCAP
+    default 41 if USE_GFX_NEWHAVEN_43_480X272_PCAP
+    default 25 if USE_GFX_CRYSTAL_2_172x220
+	default 0 if USE_GFX_ILI9341_DISPLAY
+	default 42
+
+config DRV_GFX_DISP_HOR_BACK_PORCH
+    int "Horizontal Back Porch (pixel clock cycle)"
+    depends on USE_DRV_GFX_DISPLAY
+    default 129 if USE_GFX_TRULY_7_800X480
+    default 128 if USE_GFX_TRULY_57_640X480
+    default 5 if USE_GFX_TRULY_32_240X320
+    default 2 if USE_GFX_POWERTIP_43_480X272
+    default 40 if USE_GFX_LTS_43_480X272_RTP
+    default 40 if USE_GFX_NEWHAVEN_50_800X480_PCAP
+    default 2 if USE_GFX_NEWHAVEN_43_480X272_PCAP
+    default 5 if USE_GFX_CRYSTAL_2_172x220
+	default 0 if USE_GFX_ILI9341_DISPLAY
+	default 2
+
+config DRV_GFX_DISP_HOR_FRONT_PORCH
+    int "Horizontal Front Porch (pixel clock cycle)"
+    depends on USE_DRV_GFX_DISPLAY
+    default 2 if USE_GFX_TRULY_7_800X480
+    default 2 if USE_GFX_TRULY_57_640X480
+    default 10 if USE_GFX_TRULY_32_240X320
+    default 2 if USE_GFX_POWERTIP_43_480X272
+    default 5 if USE_GFX_LTS_43_480X272_RTP
+    default 42 if USE_GFX_NEWHAVEN_50_800X480_PCAP
+    default 2 if USE_GFX_NEWHAVEN_43_480X272_PCAP
+    default 10 if USE_GFX_CRYSTAL_2_172x220
+	default 0 if USE_GFX_ILI9341_DISPLAY
+	default 2
+
+config DRV_GFX_DISP_VER_PULSE_WIDTH
+    int "Vertical Pulse Width (H-sync)"
+    depends on USE_DRV_GFX_DISPLAY
+    default 2 if USE_GFX_TRULY_7_800X480
+    default 3 if USE_GFX_TRULY_57_640X480
+    default 4 if USE_GFX_TRULY_32_240X320
+    default 10 if USE_GFX_POWERTIP_43_480X272
+    default 10 if USE_GFX_LTS_43_480X272_RTP
+    default 3 if USE_GFX_NEWHAVEN_50_800X480_PCAP
+    default 10 if USE_GFX_NEWHAVEN_43_480X272_PCAP
+    default 4 if USE_GFX_CRYSTAL_2_172x220
+	default 0 if USE_GFX_ILI9341_DISPLAY
+	default 10
+
+config DRV_GFX_DISP_VER_BACK_PORCH
+    int "Vertical Back Porch (H-sync)"
+    depends on USE_DRV_GFX_DISPLAY
+    default 41 if USE_GFX_TRULY_7_800X480
+    default 35 if USE_GFX_TRULY_57_640X480
+    default 0 if USE_GFX_TRULY_32_240X320
+    default 2 if USE_GFX_POWERTIP_43_480X272
+    default 8 if USE_GFX_LTS_43_480X272_RTP
+    default 36 if USE_GFX_NEWHAVEN_50_800X480_PCAP
+    default 2 if USE_GFX_NEWHAVEN_43_480X272_PCAP
+    default 0 if USE_GFX_CRYSTAL_2_172x220
+	default 0 if USE_GFX_ILI9341_DISPLAY
+	default 2
+
+config DRV_GFX_DISP_VER_FRONT_PORCH
+    int "Vertical Front Porch (H-sync)"
+    depends on USE_DRV_GFX_DISPLAY
+    default 2 if USE_GFX_TRULY_7_800X480
+    default 7 if USE_GFX_TRULY_57_640X480
+    default 2 if USE_GFX_TRULY_32_240X320
+    default 2 if USE_GFX_POWERTIP_43_480X272
+    default 8 if USE_GFX_LTS_43_480X272_RTP
+    default 13 if USE_GFX_NEWHAVEN_50_800X480_PCAP
+    default 2 if USE_GFX_NEWHAVEN_43_480X272_PCAP
+    default 2 if USE_GFX_CRYSTAL_2_172x220
+	default 0 if USE_GFX_ILI9341_DISPLAY
+	default 2
+
+config DRV_GFX_DISP_INV_LSHIFT
+    int "Inverting Level Shift"
+    depends on USE_DRV_GFX_DISPLAY
+    default 0 if USE_GFX_TRULY_7_800X480
+    default 1 if USE_GFX_TRULY_57_640X480
+    default 1 if USE_GFX_TRULY_32_240X320
+    default 0 if USE_GFX_POWERTIP_43_480X272
+    default 0 if USE_GFX_LTS_43_480X272_RTP
+    default 0 if USE_GFX_NEWHAVEN_50_800X480_PCAP
+    default 0 if USE_GFX_NEWHAVEN_43_480X272_PCAP
+    default 1 if USE_GFX_CRYSTAL_2_172x220
+	default 0 if USE_GFX_ILI9341_DISPLAY
+    default 0
+
+config DRV_GFX_DISP_DATA_WIDTH
+    int "Data Width (bits)"
+    depends on USE_DRV_GFX_DISPLAY
+    default 24 if USE_GFX_TRULY_7_800X480
+    default 24 if USE_GFX_TRULY_57_640X480
+    default 18 if USE_GFX_TRULY_32_240X320
+    default 24 if USE_GFX_POWERTIP_43_480X272
+    default 24 if USE_GFX_LTS_43_480X272_RTP
+    default 24 if USE_GFX_NEWHAVEN_50_800X480_PCAP
+    default 24 if USE_GFX_NEWHAVEN_43_480X272_PCAP
+    default 8 if USE_GFX_CRYSTAL_2_172x220
+	default 16 if USE_GFX_ILI9341_DISPLAY
+    default 24
+
+config DRV_GFX_DISP_PIXEL_CLOCK_FACTOR
+    int
+    depends on USE_DRV_GFX_DISPLAY
+    default 0 if USE_GFX_TRULY_7_800X480
+    default 0 if USE_GFX_TRULY_57_640X480
+    default 0 if USE_GFX_TRULY_32_240X320
+    default 0 if USE_GFX_POWERTIP_43_480X272
+    default 0 if USE_GFX_LTS_43_480X272_RTP
+    default 4 if USE_GFX_NEWHAVEN_50_800X480_PCAP
+    default 0 if USE_GFX_NEWHAVEN_43_480X272_PCAP
+    default 0 if USE_GFX_CRYSTAL_2_172x220
+	default 0 if USE_GFX_ILI9341_DISPLAY
+    default 0
+
+config DRV_GFX_DISP_LCD_TYPE
+    string
+    depends on USE_DRV_GFX_DISPLAY
+    range DRV_GFX_DISP_LCD_TYPES
+    default "GFX_LCD_TFT" if USE_GFX_TRULY_7_800X480
+    default "GFX_LCD_TFT" if USE_GFX_TRULY_57_640X480
+    default "GFX_LCD_TFT" if USE_GFX_TRULY_32_240X320
+    default "GFX_LCD_TFT" if USE_GFX_POWERTIP_43_480X272
+    default "GFX_LCD_TFT" if USE_GFX_LTS_43_480X272_RTP
+    default "GFX_LCD_TFT" if USE_GFX_NEWHAVEN_50_800X480_PCAP
+    default "GFX_LCD_TFT" if USE_GFX_NEWHAVEN_43_480X272_PCAP
+    default "GFX_LCD_TFT" if USE_GFX_CRYSTAL_2_172x220
+	default "GFX_LCD_TFT" if USE_GFX_ILI9341_DISPLAY
+    default "GFX_LCD_TFT"
+
+config DRV_GFX_DISP_BACKLIGHT_ENABLE_LEVEL
+    int "Backlight Enable Level (0 for low, 1 for high)"
+    depends on USE_DRV_GFX_DISPLAY
+	range 0 1
+    default 1 if USE_GFX_TRULY_7_800X480
+    default 1 if USE_GFX_TRULY_57_640X480
+    default 0 if USE_GFX_TRULY_32_240X320
+    default 1 if USE_GFX_POWERTIP_43_480X272
+    default 1 if USE_GFX_LTS_43_480X272_RTP
+    default 1 if USE_GFX_NEWHAVEN_50_800X480_PCAP
+    default 1 if USE_GFX_NEWHAVEN_43_480X272_PCAP
+    default 0 if USE_GFX_CRYSTAL_2_172x220
+	default 1 if USE_GFX_ILI9341_DISPLAY
+    default 1
+
+config DRV_GFX_DISP_BACKLIGHT_DISABLE_LEVEL
+    int "Backlight Disable Level (0 for low, 1 for high)"
+    depends on USE_DRV_GFX_DISPLAY
+	range 0 1
+    default 0 if USE_GFX_TRULY_7_800X480
+    default 0 if USE_GFX_TRULY_57_640X480
+    default 1 if USE_GFX_TRULY_32_240X320
+    default 0 if USE_GFX_POWERTIP_43_480X272
+    default 0 if USE_GFX_LTS_43_480X272_RTP
+    default 0 if USE_GFX_NEWHAVEN_50_800X480_PCAP
+    default 0 if USE_GFX_NEWHAVEN_43_480X272_PCAP
+    default 1 if USE_GFX_CRYSTAL_2_172x220
+	default 0 if USE_GFX_ILI9341_DISPLAY
+    default 0
+
+config DRV_GFX_DISP_REQUIRE_CALIBRATION_POINTS
+    bool "Requires Calibration Points?"
+    depends on USE_DRV_GFX_DISPLAY
+    default y if USE_GFX_TRULY_7_800X480
+    default y if USE_GFX_TRULY_57_640X480
+    default y if USE_GFX_TRULY_32_240X320
+    default y if USE_GFX_POWERTIP_43_480X272
+    default y if USE_GFX_LTS_43_480X272_RTP
+    default n if USE_GFX_NEWHAVEN_50_800X480_PCAP
+    default y if USE_GFX_NEWHAVEN_43_480X272_PCAP
+    default n if USE_GFX_CRYSTAL_2_172x220
+	default n if USE_GFX_ILI9341_DISPLAY
+    default n
+
+config DRV_GFX_DISP_TOUCHSCREEN_RESISTIVE_SWAP_XY
+    depends on DRV_GFX_DISP_REQUIRE_CALIBRATION_POINTS
+    bool "Touchscreen Resistive Swap?"
+    default y if DRV_GFX_DISP_ORIENTATION = "180" && USE_GFX_TRULY_32_240X320 || USE_GFX_TRULY_57_640X480 || USE_GFX_TRULY_7_800X480
+    default y if DRV_GFX_DISP_ORIENTATION = "0" && USE_GFX_TRULY_32_240X320 || USE_GFX_TRULY_57_640X480 || USE_GFX_TRULY_7_800X480
+    default y if USE_GFX_LTS_43_480X272_RTP
+	default n
+
+config DRV_GFX_DISP_USE_TCON_MODULE
+    bool "Use TCON Module"
+    depends on USE_DRV_GFX_DISPLAY
+    default n if USE_GFX_TRULY_7_800X480
+    default n if USE_GFX_TRULY_57_640X480
+    default y if USE_GFX_TRULY_32_240X320
+    default n if USE_GFX_POWERTIP_43_480X272
+    default n if USE_GFX_LTS_43_480X272_RTP
+    default n if USE_GFX_NEWHAVEN_50_800X480_PCAP
+    default n if USE_GFX_NEWHAVEN_43_480X272_PCAP
+    default y if USE_GFX_CRYSTAL_2_172x220
+	default n if USE_GFX_ILI9341_DISPLAY
+    default n
+
+config DRV_GFX_DISP_USE_CUSTOM_TCON_MODULE
+    bool "Use Custom TCON Module"
+    depends on USE_DRV_GFX_DISPLAY
+    default n if USE_GFX_TRULY_7_800X480
+    default n if USE_GFX_TRULY_57_640X480
+    default y if USE_GFX_TRULY_32_240X320
+    default n if USE_GFX_POWERTIP_43_480X272
+    default n if USE_GFX_LTS_43_480X272_RTP
+    default n if USE_GFX_NEWHAVEN_50_800X480_PCAP
+    default n if USE_GFX_NEWHAVEN_43_480X272_PCAP
+    default y if USE_GFX_CRYSTAL_2_172x220
+	default n if USE_GFX_ILI9341_DISPLAY
+    default n
+
+config USE_GFX_TCON_SSD1289
+	bool "Use SSD1289 Init?"
+    depends on DRV_GFX_DISP_USE_CUSTOM_TCON_MODULE
+	select USE_DRV_GFX_SSD1289_NEEDED
+	default y if USE_GFX_TRULY_32_240X320
+	default n
+
+config DRV_GFX_DISP_TCON_MODULE
+    string "TCON Module Interface"
+    depends on DRV_GFX_DISP_USE_CUSTOM_TCON_MODULE
+    default "NULL" if USE_GFX_TRULY_7_800X480
+    default "NULL" if USE_GFX_TRULY_57_640X480
+    default "GFX_TCON_SSD1289Init" if USE_GFX_TCON_SSD1289
+    default "NULL" if USE_GFX_POWERTIP_43_480X272
+    default "NULL" if USE_GFX_LTS_43_480X272_RTP
+    default "NULL" if USE_GFX_NEWHAVEN_50_800X480_PCAP
+    default "NULL" if USE_GFX_NEWHAVEN_43_480X272_PCAP
+    default "NULL" if USE_GFX_CRYSTAL_2_172x220
+	default "NULL" if USE_GFX_ILI9341_DISPLAY
+    default "NULL"
+
+config DRV_GFX_DISP_VSYNC_NEGATIVE_POLARITY
+    bool "Negative VSYNC Polarity?"
+    depends on USE_DRV_GFX_DISPLAY
+    default n
+
+config DRV_GFX_DISP_HSYNC_NEGATIVE_POLARITY
+    bool "Negative HSYNC Polarity?"
+    depends on USE_DRV_GFX_DISPLAY
+    default n
+
+config DRV_GFX_DISP_USE_DATA_ENABLE
+	bool "Use Data Enable?"
+    depends on USE_DRV_GFX_DISPLAY
+    default y
+
+config DRV_GFX_DISP_DATA_ENABLE_POSITIVE_POLARITY
+    bool "Positive Data Enable Polarity?"
+    depends on USE_DRV_GFX_DISPLAY && DRV_GFX_DISP_USE_DATA_ENABLE
+    default y
+
+config DRV_GFX_DISP_USE_RESET
+	bool "Use Reset?"
+	depends on USE_DRV_GFX_DISPLAY
+	default y
+
+config DRV_GFX_DISP_RESET_POSITIVE_POLARITY
+    bool "Positive Reset Polarity?"
+    depends on DRV_GFX_DISP_USE_RESET
+    default y
+
+config DRV_GFX_DISP_USE_CHIP_SELECT
+	bool "Use Chip Select?"
+	depends on USE_DRV_GFX_DISPLAY
+	default y
+
+config DRV_GFX_DISP_CHIP_SELECT_POSITIVE_POLARITY
+    bool "Positive Chip Select Polarity?"
+    depends on DRV_GFX_DISP_USE_CHIP_SELECT
+	default y if USE_GFX_POWERTIP_43_480X272
+    default n
+
+endmenu
+
+endmenu
+
+ifblock USE_DRV_GFX_DISPLAY
+add "<#include \"/framework/driver/gfx/display/templates/drv_gfx_display.h.ftl\">"  to list SYSTEM_CONFIG_H_DRIVER_CONFIGURATION
+endif
