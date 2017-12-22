@@ -120,7 +120,7 @@ ifblock USE_DRV_GFX_ILI9341
 
 add "<#include \"/framework/driver/gfx/controller/config/drv_gfx_init_data.c.ftl\">"  to list SYSTEM_INIT_C_DRIVER_INITIALIZATION_DATA
 add "<#include \"/framework/driver/gfx/controller/ili9341/config/drv_gfx_ili9341_init.c.ftl\">"  to list SYSTEM_INIT_C_SYS_INITIALIZE_DRIVERS
-add "<#include \"/framework/driver/gfx/controller/ili9341/templates/drv_ili9341_tasks.c.ftl\">"  to list SYSTEM_TASKS_C_CALL_DRIVER_TASKS
+
 add "<#include \"/framework/driver/gfx/controller/ili9341/config/drv_gfx_ili9341_config.h.ftl\">"  to list SYSTEM_CONFIG_H_DRIVER_CONFIGURATION 
 add "<#include \"/framework/driver/gfx/controller/ili9341/config/drv_gfx_ili9341_sys_object_data.ftl\">"  to list SYSTEM_DEFINITIONS_H_OBJECTS 
 add "<#include \"/framework/driver/gfx/controller/ili9341/config/drv_gfx_ili9341_definitions.h.ftl\">"  to list SYSTEM_DEFINITIONS_H_INCLUDES 
