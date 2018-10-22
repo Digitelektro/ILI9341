@@ -1,4 +1,4 @@
-<h1>ILI9341 Driver for MPLAB harmony V1.11</h1>
+<h1>ILI9341 + XPT2046 Driver for MPLAB harmony V1.11</h1>
 
 
 <h3>Description</h3>
