@@ -1,0 +1,51 @@
+menu "XPT2046"
+
+enum DRV_TOUCH_XPT2046_SPI_INSTANCE_INDEX_TYPE
+	"DRV_SPI_INDEX_0" ||
+	"DRV_SPI_INDEX_1" ||
+	"DRV_SPI_INDEX_2" ||
+	"DRV_SPI_INDEX_3" ||
+	"DRV_SPI_INDEX_4" ||
+	"DRV_SPI_INDEX_5"
+
+config USE_DRV_TOUCH_XPT2046_NEEDED
+    bool
+
+config USE_DRV_TOUCH_XPT2046
+    bool "Use XPT2046 Driver?"
+	select DRIVER
+    select DRV_SPI_USE_DRIVER_NEEDED
+    select DRV_SPI_DYNAMIC_MODE
+    select DRV_SPI_USE_ISR_MODE
+    select USE_SYS_TOUCH_NEEDED
+    select USE_SYS_INT_NEEDED
+    select USE_EXT_INT_NEEDED
+    default y if USE_DRV_TOUCH_XPT2046_NEEDED
+    default n if !USE_DRV_TOUCH_XPT2046_NEEDED
+
+
+config DRV_TOUCH_XPT2046_SPI_MODULE_INDEX
+    string "SPI driver module index"
+    depends on USE_DRV_TOUCH_XPT2046
+    range DRV_TOUCH_XPT2046_SPI_INSTANCE_INDEX_TYPE
+	default "DRV_SPI_INDEX_0"	
+
+
+endmenu
+
+ifblock USE_DRV_TOUCH_XPT2046
+
+add "<#include \"/framework/driver/touch/xpt2046/config/drv_xpt2046.c.ftl\">"  to list SYSTEM_INIT_C_DRIVER_INITIALIZATION_DATA
+add "<#include \"/framework/driver/touch/xpt2046/config/drv_xpt2046_init.c.ftl\">"  to list SYSTEM_INIT_C_SYS_INITIALIZE_DRIVERS
+add "<#include \"/framework/driver/touch/xpt2046/config/drv_xpt2046_tasks.c.ftl\">"  to list SYSTEM_TASKS_C_CALL_DRIVER_TASKS
+add "<#include \"/framework/driver/touch/xpt2046/config/drv_xpt2046.h.ftl\">"  to list SYSTEM_CONFIG_H_DRIVER_CONFIGURATION 
+add "<#include \"/framework/driver/touch/xpt2046/config/drv_xpt2046_sys_object_data.ftl\">"  to list SYSTEM_DEFINITIONS_H_OBJECTS 
+add "<#include \"/framework/driver/touch/xpt2046/config/drv_xpt2046_definitions.h.ftl\">"  to list SYSTEM_DEFINITIONS_H_INCLUDES 
+
+file DRV_XPT2046_H "$HARMONY_VERSION_PATH/framework/driver/touch/xpt2046/drv_xpt2046.h" to "$PROJECT_HEADER_FILES/framework/driver/touch/xpt2046/drv_xpt2046.h"
+file DRV_XPT2046_TOUCH_H "$HARMONY_VERSION_PATH/framework/driver/touch/drv_touch.h" to "$PROJECT_HEADER_FILES/framework/driver/touch/drv_touch.h"
+file DRV_XPT2046_C "$HARMONY_VERSION_PATH/framework/driver/touch/xpt2046/src/drv_xpt2046.c" to "$PROJECT_SOURCE_FILES/framework/driver/touch/xpt2046/src/drv_xpt2046.c"
+
+endif
+
+
